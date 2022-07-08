@@ -2,10 +2,8 @@ package katas;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import model.MovieList;
 import util.DataUtil;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,18 +54,18 @@ public class Kata10 {
         List<Map> lists = DataUtil.getLists();
         List<Map> videos = DataUtil.getVideos();
 
-        //System.out.println(lists.toString());
-        //System.out.println(videos.toString());
 
-       var li = lists.stream().map(list ->  List.of(list.values()))
-               .flatMap( list -> list.stream())
-               .map(list -> List.of(list)).collect(Collectors.toList());
-        var lista2 = (li.get(0).get(0).stream().map(list -> list).collect(Collectors.toList()));
+       List joinListVideos = lists.stream().map(list ->  ImmutableMap.of("name", list.get("name"), "videos", findVidosByIdList(list.get("id"), videos) ))
+               .collect(Collectors.toList());
 
-        return ImmutableList.of(
-                ImmutableMap.of("name", "someName", "videos", ImmutableList.of(
-                ImmutableMap.of("id", 5, "title", "The Chamber"),
-                ImmutableMap.of("id", 3, "title", "Fracture")
-        )));
+        System.out.println(joinListVideos);
+
+       return joinListVideos;
+    }
+
+    public static List<ImmutableList<Object>> findVidosByIdList(Object id, List<Map> videos) {
+
+        List videosList  = videos.stream().filter(idList ->  idList.get("listId").equals(id)).map( videoList -> ImmutableMap.of("id", videoList.get("id"), "title", videoList.get("title"))).collect(Collectors.toList());
+        return videosList;
     }
 }

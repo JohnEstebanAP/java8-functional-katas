@@ -6,6 +6,7 @@ import util.DataUtil;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
     Goal: Create a datastructure from the given data:
@@ -63,8 +64,35 @@ public class Kata11 {
         List<Map> boxArts = DataUtil.getBoxArts();
         List<Map> bookmarkList = DataUtil.getBookmarkList();
 
-        return ImmutableList.of(ImmutableMap.of("name", "someName", "videos", ImmutableList.of(
-                ImmutableMap.of("id", 5, "title", "The Chamber", "time", 123, "boxart", "someUrl")
-        )));
+        List joinListVideos = lists.stream().map(list ->  ImmutableMap.of("name", list.get("name"), "videos", findVideosByIdList(list.get("id"), videos, bookmarkList,boxArts) ))
+                .collect(Collectors.toList());
+
+        System.out.println(joinListVideos);
+
+        //return joinListVideos;
+        return joinListVideos;
+    }
+
+    public static List<ImmutableList<Object>> findVideosByIdList(Object id, List<Map> videos,  List<Map> bookmarkList ,List<Map> boxArts) {
+
+        List videosList  = videos.stream().filter(idList ->  idList.get("listId").equals(id))
+                .map( videoList -> {
+                    return ImmutableMap.of("id", videoList.get("id"),
+                            "title", videoList.get("title"),
+                            "time", findTimeByIdVideo(bookmarkList , videoList.get("id")),
+                            "boxart", findUrlByIdVideo(boxArts, videoList.get("id"))
+                    );
+                }).collect(Collectors.toList());
+        return videosList;
+    }
+
+    public static Object findTimeByIdVideo(List<Map> bookmarkList, Object id) {
+        var dato  = bookmarkList.stream().filter(idList ->  idList.get("videoId").equals(id)).map( bookmarkTime -> bookmarkTime.get("time")).collect(Collectors.toList()).get(0);
+        return dato;
+    }
+
+    public static Object findUrlByIdVideo(List<Map> boxArts, Object id) {
+        var dato  = boxArts.stream().filter(idList ->  idList.get("videoId").equals(id)).map( boxArtsUrl -> boxArtsUrl.get("url")).collect(Collectors.toList()).get(0);
+        return dato;
     }
 }

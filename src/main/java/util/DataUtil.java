@@ -253,6 +253,7 @@ public class DataUtil {
         List<Map> result = new ArrayList<>();
         result.add(ImmutableMap.of("id", 5434364, "name", "New Releases"));
         result.add(ImmutableMap.of("id", 65456475, "name", "Thrillers"));
+
         return result;
     }
 
